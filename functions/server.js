@@ -21,5 +21,6 @@ app.get('/contacts', (req, res) => {
     console.log(req.params)
     services.deleteMessage(req, res);
 });*/
+const port = process.env.PORT || 8080;
 
-app.listen(3000, () => console.log(`app listen in port 3000`));
+app.listen(port, () => console.log(`app listen in port ${port}`));

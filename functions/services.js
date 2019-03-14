@@ -1,5 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require("firebase-admin");
+const cors = require('cors')({origin: true});
 
 process.env.TZ = 'UTC';
 
@@ -23,20 +24,22 @@ db.settings(settings);
 
 exports.saveContact = functions.https.onRequest((req, res) => {
 
-    res.setHeader('Content-Type', 'application/json');
-    const contact = req.body;
-
-    if( contact && contact.name ){
-        return db.collection('contacts').doc(`${contact.name}-${Math.floor(Math.random() * 100)}`).set(contact)
-            .then(value => {
-                res.status(200).send(value)
-                return 
-            }).catch(err => {
-                console.log(err)
-                res.status(500).send({ error: true, message: 'Contato não criado.' })
-                return 
-            })
-    }
+    cors((req, res) => {
+        res.setHeader('Content-Type', 'application/json');
+        const contact = req.body;
+    
+        if( contact && contact.name ){
+            return db.collection('contacts').doc(`${contact.name}-${Math.floor(Math.random() * 100)}`).set(contact)
+                .then(value => {
+                    res.status(200).send(value)
+                    return 
+                }).catch(err => {
+                    console.log(err)
+                    res.status(500).send({ error: true, message: 'Contato não criado.' })
+                    return 
+                })
+        }
+    })
 });
 
 exports.getContacts = functions.https.onRequest((req, res) => {
