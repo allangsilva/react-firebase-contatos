@@ -3,6 +3,16 @@ import axios from 'axios';
 
 import './App.css';
 
+const api = axios.create({
+  baseURL: 'https://us-central1-react-firebase-contatos.cloudfunctions.net/', 
+  timeout: 10000,
+  withCredentials: true,
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  }
+});
+
 class App extends Component {
 
   constructor(props) {
@@ -35,15 +45,8 @@ class App extends Component {
   saveContato = () => {
 
     const { contato } = this.state;
-    console.log({ name : contato })
-    axios.post(`http://localhost:8080/contacts`, { name : contato }, { method: 'GET',
-    mode: 'no-cors',
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/json',
-    },
-    withCredentials: true,
-    credentials: 'same-origin' })
+    
+    api.post(`/services-saveContact`, { name : contato })
       .then(res => {
         console.log(res);
         console.log(res.data);
