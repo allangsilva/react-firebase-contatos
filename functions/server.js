@@ -10,11 +10,11 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.post('/contacts', (req, res) => {
-    services.saveContact(req, res);
+    services.save(req, res);
 });
 
 app.get('/contacts', (req, res) => {
-    services.getContacts(req, res);
+    services.get(req, res);
 });
 
 /*app.delete('/messages/:id', (req, res) => {

@@ -5,10 +5,10 @@ import './App.css';
 
 const api = axios.create({
   baseURL: 'https://us-central1-react-firebase-contatos.cloudfunctions.net/', 
-  timeout: 10000,
+  timeout: 999999999,
   withCredentials: true,
   headers: {
-    'Accept': 'application/json',
+    'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json',
   }
 });
@@ -18,24 +18,29 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      contato : ''
+      contato : '',
+      contatos: []
     }
   }
 
-  get contatos() {
-    return (
-      <div>
-        <p>CONTATO 01</p>
-        <p>CONTATO 01</p>
-        <p>CONTATO 01</p>
-        <p>CONTATO 01</p>
-        <p>CONTATO 01</p>
-      </div>
-    )
+  componentWillMount(){
+    this.getContatos();
   }
 
-  saveContato() {
-    console.log("Salvando contato...")
+  getContatos() {
+    axios.get('/services-get')
+      .then(result => {
+        this.setState({ contatos : result.data })
+      })
+  }
+
+  get contatos() {
+    const { contatos } = this.state;
+    return (
+      <div>
+        { contatos.map( contato => (<p>{contato}</p>) ) }
+      </div>
+    )
   }
 
   handleChange(evt) {
@@ -46,10 +51,15 @@ class App extends Component {
 
     const { contato } = this.state;
     
-    api.post(`/services-saveContact`, { name : contato })
+    api.post(`/services-save`, { name : contato })
       .then(res => {
         console.log(res);
         console.log(res.data);
+        this.getContatos();
+      })
+      .catch(err => {
+        alert('Erro ao salvar contato')
+        console.log(err)
       })
   }
 
