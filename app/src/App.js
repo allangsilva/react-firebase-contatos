@@ -3,16 +3,6 @@ import axios from 'axios';
 
 import './App.css';
 
-const api = axios.create({
-  baseURL: 'https://us-central1-react-firebase-contatos.cloudfunctions.net/', 
-  timeout: 999999999,
-  withCredentials: true,
-  headers: {
-    'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'application/json',
-  }
-});
-
 class App extends Component {
 
   constructor(props) {
@@ -24,11 +14,12 @@ class App extends Component {
   }
 
   componentWillMount(){
+    
     this.getContatos();
   }
 
   getContatos() {
-    axios.get('/services-get')
+    axios.get('https://us-central1-react-firebase-contatos.cloudfunctions.net/services-get')
       .then(result => {
         this.setState({ contatos : result.data })
       })
@@ -38,7 +29,7 @@ class App extends Component {
     const { contatos } = this.state;
     return (
       <div>
-        { contatos.map( contato => (<p>{contato}</p>) ) }
+        { contatos.map( contato => (<p key={Math.random()}>{contato.name}</p>) ) }
       </div>
     )
   }
@@ -48,10 +39,8 @@ class App extends Component {
   }
 
   saveContato = () => {
-
     const { contato } = this.state;
-    
-    api.post(`/services-save`, { name : contato })
+    axios.post(`https://us-central1-react-firebase-contatos.cloudfunctions.net/services-save`, { name : contato })
       .then(res => {
         console.log(res);
         console.log(res.data);
@@ -79,7 +68,7 @@ class App extends Component {
            }}
            value={this.state.contato} onChange={this.handleChange.bind(this)}
            />
-          <a
+          <button
             className="App-link"
             style={{
               cursor: 'pointer'
@@ -89,7 +78,7 @@ class App extends Component {
             rel="noopener noreferrer"
           >
             Salvar
-          </a>
+          </button>
           {this.contatos}
         </header>
       </div>
